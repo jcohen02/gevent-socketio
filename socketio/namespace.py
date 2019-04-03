@@ -2,6 +2,7 @@ import gevent
 import re
 import logging
 import inspect
+import six
 
 log = logging.getLogger(__name__)
 
@@ -264,7 +265,10 @@ class BaseNamespace(object):
                        'The method "%s" was not found' % method_name)
             return
 
-        specs = inspect.getargspec(method)
+        if six.PY2:
+            specs = inspect.getargspec(method)
+        if six.PY3:
+            specs = inspect.getfullargspec(method)
         func_args = specs.args
         if not len(func_args) or func_args[0] != 'self':
             self.error("invalid_method_args",
